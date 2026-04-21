@@ -139,12 +139,31 @@ jobs:
           restore-keys: |
             anncsu-date-marker-${{ runner.os }}-
 
+      - name: Ripristina anncsu-indirizzi da cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/anncsu-indirizzi.parquet
+            data/anncsu-indirizzi.pmtiles
+          key: anncsu-parquet-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            anncsu-parquet-${{ runner.os }}-
+
       - name: Aggiorna dati ANNCSU
         run: |
           ARGS=""
           [ "${{ inputs.force }}" = "true" ]        && ARGS="$ARGS --force"
           [ "${{ inputs.skip_pmtiles }}" = "true" ] && ARGS="$ARGS --skip-pmtiles"
           uv run scripts/update_data.py $ARGS
+
+      - name: Salva anncsu-indirizzi in cache
+        if: hashFiles('data/anncsu-indirizzi.parquet') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            data/anncsu-indirizzi.parquet
+            data/anncsu-indirizzi.pmtiles
+          key: anncsu-parquet-${{ runner.os }}-${{ github.run_id }}
 
       - name: Salva marker data dataset
         uses: actions/cache/save@v4
