@@ -1,8 +1,8 @@
 name: Update ANNCSU Data
 
 on:
-  # schedule:
-  #   - cron: '0 1 1,5,9,13,15 * 1-5'
+   schedule:
+     - cron: '0 1 1,5,9,13,15 * 1-5'
   workflow_dispatch:
     inputs:
       force:
