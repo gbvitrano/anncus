@@ -6,13 +6,13 @@
     
 ## Dati by @opendatasicilia 
 
-[anncsu-indirizzi.parquet](https://media.githubusercontent.com/media/quattochiacchiereinquattro/anncus/main/data/anncsu-indirizzi.parquet)
+[anncsu-indirizzi.parquet](#)
 
-[anncsu-indirizzi.pmtiles](https://media.githubusercontent.com/media/quattochiacchiereinquattro/anncus/main/data/anncsu-indirizzi.pmtiles)
+[anncsu-indirizzi.pmtiles](#)
 
-[istat-boundaries.parquet](https://media.githubusercontent.com/media/quattochiacchiereinquattro/anncus/main/data/istat-boundaries.parquet)
+[istat-boundaries.parquet](#)
 
-[comuni.json](https://raw.githubusercontent.com/quattochiacchiereinquattro/anncus/refs/heads/main/data/comuni.json)
+[comuni.json](#)
 
 ---
 
