@@ -198,8 +198,8 @@ jobs:
           set ftp:passive-mode true
           set net:timeout 60
           set net:reconnect-interval-base 5
-          mkdir -pf anncus/data
-          cd anncus/data
+          mkdir -f data
+          cd data
           put data/comuni.json
           put data/istat-boundaries.parquet
           FTPEOF
@@ -210,7 +210,7 @@ jobs:
           set ssl:verify-certificate false
           set ftp:passive-mode true
           set net:timeout 60
-          cd anncus/data
+          cd data
           put data/anncsu-indirizzi.parquet
           FTPEOF2
           else
@@ -230,7 +230,7 @@ jobs:
           set ftp:passive-mode true
           set net:timeout 120
           set net:reconnect-interval-base 5
-          cd anncus/data
+          cd data
           put data/anncsu-indirizzi.pmtiles
           bye
           FTPEOF
