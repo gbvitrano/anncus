@@ -1,0 +1,4 @@
+Avvio mauale  da bash
+
+uv run scripts/generate_comuni.py
+uv run scripts/update_data.py --force
