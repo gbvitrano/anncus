@@ -132,10 +132,12 @@ jobs:
           path: data/
 
       - name: Ripristina marker data precedente
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: data/.last_remote_date
-          key: anncsu-date-marker-${{ runner.os }}
+          key: anncsu-date-marker-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            anncsu-date-marker-${{ runner.os }}-
 
       - name: Aggiorna dati ANNCSU
         run: |
@@ -145,10 +147,10 @@ jobs:
           uv run scripts/update_data.py $ARGS
 
       - name: Salva marker data dataset
-        uses: actions/cache@v4
+        uses: actions/cache/save@v4
         with:
           path: data/.last_remote_date
-          key: anncsu-date-marker-${{ runner.os }}
+          key: anncsu-date-marker-${{ runner.os }}-${{ github.run_id }}
 
       - name: Commit comuni.json e marker data
         run: |
@@ -171,10 +173,12 @@ jobs:
           lftp -u "$FTP_USERNAME","$FTP_PASSWORD" ftp.gbvitrano.it << 'FTPEOF'
           set ssl:verify-certificate false
           set ftp:passive-mode true
-          mkdir -p /public_html/anncus/data
-          put data/comuni.json -o /public_html/anncus/data/comuni.json
-          put data/anncsu-indirizzi.parquet -o /public_html/anncus/data/anncsu-indirizzi.parquet
-          put data/istat-boundaries.parquet -o /public_html/anncus/data/istat-boundaries.parquet
+          set net:timeout 30
+          mkdir -p anncus/data
+          cd anncus/data
+          put data/comuni.json
+          put data/anncsu-indirizzi.parquet
+          put data/istat-boundaries.parquet
           bye
           FTPEOF
 
@@ -187,6 +191,8 @@ jobs:
           lftp -u "$FTP_USERNAME","$FTP_PASSWORD" ftp.gbvitrano.it << 'FTPEOF'
           set ssl:verify-certificate false
           set ftp:passive-mode true
-          put data/anncsu-indirizzi.pmtiles -o /public_html/anncus/data/anncsu-indirizzi.pmtiles
+          set net:timeout 30
+          cd anncus/data
+          put data/anncsu-indirizzi.pmtiles
           bye
           FTPEOF
