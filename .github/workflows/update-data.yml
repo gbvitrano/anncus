@@ -179,7 +179,7 @@ jobs:
           set ftp:passive-mode true
           set net:timeout 60
           set net:reconnect-interval-base 5
-          mkdir -p anncus/data
+          mkdir -pf anncus/data
           cd anncus/data
           put data/comuni.json
           put data/istat-boundaries.parquet
