@@ -168,7 +168,8 @@ jobs:
       # ── Invio file pesanti via FTP sul server gbvitrano.it ────────────────
       - name: Installa lftp
         run: sudo apt-get install -y lftp
-- name: Carica file su FTP
+
+      - name: Carica file su FTP
         env:
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
@@ -189,4 +190,4 @@ jobs:
             put data/anncsu-indirizzi.pmtiles -o /public_html/anncus/data/anncsu-indirizzi.pmtiles
             bye
             EOF
-          fi
+          fi  
