@@ -188,7 +188,8 @@ jobs:
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
-          lftp -u "$FTP_USERNAME","$FTP_PASSWORD" ftp.gbvitrano.it << 'FTPEOF'
+          if [ -f data/anncsu-indirizzi.pmtiles ]; then
+            lftp -u "$FTP_USERNAME","$FTP_PASSWORD" ftp.gbvitrano.it << 'FTPEOF'
           set ssl:verify-certificate false
           set ftp:passive-mode true
           set net:timeout 30
@@ -196,3 +197,6 @@ jobs:
           put data/anncsu-indirizzi.pmtiles
           bye
           FTPEOF
+          else
+            echo "anncsu-indirizzi.pmtiles non trovato, salto upload"
+          fi
