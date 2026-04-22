@@ -6,18 +6,17 @@
     
 ## Dati by @opendatasicilia 
 
-[anncsu-indirizzi.parquet](https://gbvitrano.it/anncus/data/anncsu-indirizzi.parquet)
+[anncsu-indirizzi.parquet](https://gbvitrano.it/anncus/data/anncsu-indirizzi.parquet) - [(https://gbvitrano.it/anncus/data/anncsu-indirizzi.parquet)](https://gbvitrano.it/anncus/data/anncsu-indirizzi.parquet)
 
-[anncsu-indirizzi.pmtiles](https://gbvitrano.it/anncus/data/anncsu-indirizzi.pmtiles)
+[anncsu-indirizzi.pmtiles](https://gbvitrano.it/anncus/data/anncsu-indirizzi.pmtiles) - [(https://gbvitrano.it/anncus/data/anncsu-indirizzi.pmtiles)](https://gbvitrano.it/anncus/data/anncsu-indirizzi.pmtiles)
 
-[istat-boundaries.parquet](https://gbvitrano.it/anncus/data/istat-boundaries.parquet)
+[istat-boundaries.parquet](https://gbvitrano.it/anncus/data/istat-boundaries.parquet) - [(https://gbvitrano.it/anncus/data/istat-boundaries.parquet)](https://gbvitrano.it/anncus/data/istat-boundaries.parquet)
 
-[comuni.pmtiles](https://gbvitrano.it/anncus/data/comuni.pmtiles)
+[comuni.pmtiles](https://gbvitrano.it/anncus/data/comuni.pmtiles)  - [(https://gbvitrano.it/anncus/data/comuni.pmtiles)](https://gbvitrano.it/anncus/data/comuni.pmtiles)
 
-[comuni_full.pmtiles](https://gbvitrano.it/anncus/data/comuni_full.pmtiles)
+[comuni_full.pmtiles](https://gbvitrano.it/anncus/data/comuni_full.pmtiles) - [(https://gbvitrano.it/anncus/data/comuni_full.pmtiles)](https://gbvitrano.it/anncus/data/comuni_full.pmtiles)
 
-[comuni.json](https://gbvitrano.it/anncus/data/comuni.json)
-
+[comuni.json](https://gbvitrano.it/anncus/data/comuni.json)  - [(https://gbvitrano.it/anncus/data/comuni.json)](https://gbvitrano.it/anncus/data/comuni.json)
 
 ---
 
