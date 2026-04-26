@@ -1,0 +1,8 @@
+/scripts/old
+scripts/carica_geoparquet_postgis_00.py
+data/.htaccess
+data/comuni.geojson
+data/comuni.pmtiles
+data/palermo.geojson
+data/palermo.qmd
+.github/workflows/update-data_old.yml
