@@ -152,7 +152,6 @@ jobs:
         with:
           path: |
             data/anncsu-indirizzi.parquet
-            data/anncsu-indirizzi-slim.parquet
             data/anncsu-indirizzi.pmtiles
           key: anncsu-parquet-${{ runner.os }}-${{ github.run_id }}
           restore-keys: |
@@ -175,7 +174,6 @@ jobs:
         with:
           path: |
             data/anncsu-indirizzi.parquet
-            data/anncsu-indirizzi-slim.parquet
             data/anncsu-indirizzi.pmtiles
           key: anncsu-parquet-${{ runner.os }}-${{ github.run_id }}
 
@@ -273,6 +271,10 @@ jobs:
           PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
         run: uv run scripts/carica_geoparquet_postgis.py
 
+      - name: Rimuovi anncsu-indirizzi-slim.parquet dal runner
+        if: always()
+        run: rm -f data/anncsu-indirizzi-slim.parquet
+
   reload-postgis:
     name: "3 - Ricarica PostGIS da FTP"
     runs-on: ubuntu-latest
@@ -311,3 +313,7 @@ jobs:
           PG_USERNAME: ${{ secrets.PG_USERNAME }}
           PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
         run: uv run scripts/carica_geoparquet_postgis.py
+
+      - name: Rimuovi anncsu-indirizzi-slim.parquet dal runner
+        if: always()
+        run: rm -f data/anncsu-indirizzi-slim.parquet

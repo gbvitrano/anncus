@@ -5,4 +5,5 @@ data/comuni.geojson
 data/comuni.pmtiles
 data/palermo.geojson
 data/palermo.qmd
+data/anncsu-indirizzi-slim.parquet
 .github/workflows/update-data_old.yml
