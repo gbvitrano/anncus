@@ -4,6 +4,7 @@
 #     "geopandas>=1.0.0",
 #     "pyarrow>=14.0",
 #     "pyogrio>=0.7.0",
+#     "geoalchemy2>=0.14.0",
 #     "sqlalchemy>=2.0",
 #     "psycopg2-binary",
 # ]
