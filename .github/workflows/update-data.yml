@@ -17,6 +17,10 @@ on:
         description: "Rigenera istat-boundaries.parquet anche se già presente"
         type: boolean
         default: false
+      force_postgis:
+        description: "Forza download, crea slim parquet e carica su PostGIS (salta PMTiles)"
+        type: boolean
+        default: false
 
 concurrency:
   group: update-data
@@ -116,7 +120,7 @@ jobs:
           enable-cache: true
 
       - name: Installa tippecanoe
-        if: ${{ !inputs.skip_pmtiles }}
+        if: ${{ !inputs.skip_pmtiles && !inputs.force_postgis }}
         run: sudo apt-get install -y tippecanoe
 
       - name: Download comuni.json
@@ -153,8 +157,12 @@ jobs:
       - name: Aggiorna dati ANNCSU
         run: |
           ARGS=""
-          [ "${{ inputs.force }}" = "true" ]        && ARGS="$ARGS --force"
-          [ "${{ inputs.skip_pmtiles }}" = "true" ] && ARGS="$ARGS --skip-pmtiles"
+          if [ "${{ inputs.force }}" = "true" ] || [ "${{ inputs.force_postgis }}" = "true" ]; then
+            ARGS="$ARGS --force"
+          fi
+          if [ "${{ inputs.skip_pmtiles }}" = "true" ] || [ "${{ inputs.force_postgis }}" = "true" ]; then
+            ARGS="$ARGS --skip-pmtiles"
+          fi
           uv run scripts/update_data.py $ARGS
 
       - name: Salva anncsu-indirizzi in cache
@@ -232,7 +240,7 @@ jobs:
           fi
 
       - name: Carica PMTiles su FTP
-        if: ${{ !inputs.skip_pmtiles }}
+        if: ${{ !inputs.skip_pmtiles && !inputs.force_postgis }}
         env:
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
