@@ -1,0 +1,52 @@
+name: Ricarica PostGIS da FTP
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: reload-postgis
+  cancel-in-progress: false
+
+jobs:
+
+  reload-postgis:
+    name: "Scarica slim parquet da FTP e carica su PostGIS"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Installa lftp
+        run: sudo apt-get install -y lftp
+
+      - name: Scarica anncsu-indirizzi-slim.parquet da FTP
+        env:
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          mkdir -p data
+          lftp -u "$FTP_USERNAME","$FTP_PASSWORD" ftp.gbvitrano.it << 'FTPEOF'
+          set cmd:fail-exit true
+          set ssl:verify-certificate false
+          set ftp:passive-mode true
+          set net:timeout 120
+          cd data
+          get anncsu-indirizzi-slim.parquet -o data/anncsu-indirizzi-slim.parquet
+          bye
+          FTPEOF
+          ls -lh data/anncsu-indirizzi-slim.parquet
+
+      - name: Carica anncsu-indirizzi-slim su PostGIS
+        env:
+          PG_USERNAME: ${{ secrets.PG_USERNAME }}
+          PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+        run: uv run scripts/carica_geoparquet_postgis.py
+
+      - name: Rimuovi anncsu-indirizzi-slim.parquet dal runner
+        if: always()
+        run: rm -f data/anncsu-indirizzi-slim.parquet
