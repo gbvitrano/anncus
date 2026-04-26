@@ -226,7 +226,7 @@ jobs:
             echo "::warning::data/anncsu-indirizzi.parquet non trovato, salto upload"
           fi
 
-          if [ -f data/anncsu-indirizzi-slim.parquet ]; then
+          if [ -f data/anncsu-indirizzi-slim.parquet ] && [ "${{ inputs.force_postgis }}" != "true" ]; then
             lftp -u "$FTP_USERNAME","$FTP_PASSWORD" ftp.gbvitrano.it << 'FTPEOF3'
           set cmd:fail-exit true
           set ssl:verify-certificate false
@@ -235,6 +235,8 @@ jobs:
           cd data
           put data/anncsu-indirizzi-slim.parquet
           FTPEOF3
+          elif [ "${{ inputs.force_postgis }}" = "true" ]; then
+            echo "::notice::force_postgis attivo, salto FTP per anncsu-indirizzi-slim.parquet"
           else
             echo "::warning::data/anncsu-indirizzi-slim.parquet non trovato, salto upload"
           fi
