@@ -62,10 +62,18 @@ REGION_URLS = {
 
 OUTPUT_DIR = Path(__file__).resolve().parent.parent / "data"
 OUTPUT_FILE = OUTPUT_DIR / "anncsu-indirizzi.parquet"
+SLIM_FILE = OUTPUT_DIR / "anncsu-indirizzi-slim.parquet"
 PMTILES_FILE = OUTPUT_DIR / "anncsu-indirizzi.pmtiles"
 COMUNI_FILE = OUTPUT_DIR / "comuni.json"
 BOUNDARIES_FILE = OUTPUT_DIR / "istat-boundaries.parquet"
 MARKER_FILE = OUTPUT_DIR / ".last_remote_date"
+
+SLIM_COLS = [
+    "ODONIMO", "CIVICO", "ESPONENTE", "CODICE_COMUNE", "CODICE_ISTAT",
+    "NOME_COMUNE", "longitude", "latitude", "oob_distance_m", "out_of_bounds",
+    "geometry",
+]
+
 TAIL_SIZE = 65536
 DOWNLOAD_TIMEOUT = 600
 MAX_RETRIES = 3
@@ -420,6 +428,39 @@ def enhance_with_geoparquet(parquet_path: Path) -> None:
     print("GeoParquet enhancement complete")
 
 
+def create_slim_parquet(parquet_path: Path) -> Path:
+    """Create slim GeoParquet with essential columns only for PostGIS loading."""
+    import geoparquet_io as gpio
+
+    print(f"Creating slim parquet: {SLIM_FILE} ...")
+    con = duckdb.connect()
+    con.execute("INSTALL spatial; LOAD spatial;")
+
+    schema = con.execute(
+        f"DESCRIBE SELECT * FROM read_parquet('{parquet_path}')"
+    ).fetchall()
+    existing = {row[0] for row in schema}
+    cols = [c for c in SLIM_COLS if c in existing]
+    missing = set(SLIM_COLS) - existing
+    if missing:
+        print(f"  Warning: colonne non trovate, saltate: {missing}")
+
+    con.execute(f"""
+        COPY (
+            SELECT {', '.join(cols)}
+            FROM read_parquet('{parquet_path}')
+        ) TO '{SLIM_FILE}'
+        (FORMAT PARQUET, COMPRESSION ZSTD)
+    """)
+    con.close()
+
+    gpio.read(str(SLIM_FILE)).add_bbox().write(str(SLIM_FILE))
+
+    size_mb = SLIM_FILE.stat().st_size / (1024 * 1024)
+    print(f"Slim parquet creato: {SLIM_FILE} ({size_mb:.1f} MB)")
+    return SLIM_FILE
+
+
 def convert_to_pmtiles(parquet_path: Path) -> Path:
     """Convert GeoParquet to PMTiles for map visualization."""
     from gpio_pmtiles import create_pmtiles_from_geoparquet
@@ -462,6 +503,7 @@ def main(
     try:
         parquet_path = csv_to_parquet(csv_paths)
         enhance_with_geoparquet(parquet_path)
+        create_slim_parquet(parquet_path)
         if not skip_pmtiles:
             convert_to_pmtiles(parquet_path)
     finally:
@@ -476,6 +518,9 @@ def main(
 
     size_mb = parquet_path.stat().st_size / (1024 * 1024)
     print(f"Done! GeoParquet: {parquet_path} ({size_mb:.1f} MB)")
+    if SLIM_FILE.exists():
+        slim_size_mb = SLIM_FILE.stat().st_size / (1024 * 1024)
+        print(f"Done! Slim GeoParquet: {SLIM_FILE} ({slim_size_mb:.1f} MB)")
     if PMTILES_FILE.exists():
         pm_size_mb = PMTILES_FILE.stat().st_size / (1024 * 1024)
         print(f"Done! PMTiles: {PMTILES_FILE} ({pm_size_mb:.1f} MB)")

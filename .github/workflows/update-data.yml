@@ -144,6 +144,7 @@ jobs:
         with:
           path: |
             data/anncsu-indirizzi.parquet
+            data/anncsu-indirizzi-slim.parquet
             data/anncsu-indirizzi.pmtiles
           key: anncsu-parquet-${{ runner.os }}-${{ github.run_id }}
           restore-keys: |
@@ -162,6 +163,7 @@ jobs:
         with:
           path: |
             data/anncsu-indirizzi.parquet
+            data/anncsu-indirizzi-slim.parquet
             data/anncsu-indirizzi.pmtiles
           key: anncsu-parquet-${{ runner.os }}-${{ github.run_id }}
 
@@ -216,6 +218,19 @@ jobs:
             echo "::warning::data/anncsu-indirizzi.parquet non trovato, salto upload"
           fi
 
+          if [ -f data/anncsu-indirizzi-slim.parquet ]; then
+            lftp -u "$FTP_USERNAME","$FTP_PASSWORD" ftp.gbvitrano.it << 'FTPEOF3'
+          set cmd:fail-exit true
+          set ssl:verify-certificate false
+          set ftp:passive-mode true
+          set net:timeout 60
+          cd data
+          put data/anncsu-indirizzi-slim.parquet
+          FTPEOF3
+          else
+            echo "::warning::data/anncsu-indirizzi-slim.parquet non trovato, salto upload"
+          fi
+
       - name: Carica PMTiles su FTP
         if: ${{ !inputs.skip_pmtiles }}
         env:
@@ -236,3 +251,10 @@ jobs:
           else
             echo "::notice::anncsu-indirizzi.pmtiles non trovato, salto upload"
           fi
+
+      - name: Carica anncsu-indirizzi-slim su PostGIS
+        if: hashFiles('data/anncsu-indirizzi-slim.parquet') != ''
+        env:
+          PG_USERNAME: ${{ secrets.PG_USERNAME }}
+          PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+        run: uv run scripts/carica_geoparquet_postgis.py
