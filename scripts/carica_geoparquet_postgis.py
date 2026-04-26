@@ -16,7 +16,7 @@ from sqlalchemy import create_engine
 
 HOST     = "pg.coseerobe.it"
 PORT     = 5432
-DB       = "anncsu-indirizzi"
+DB       = "anncsu-indirizzi-slim"
 USER     = os.environ["PG_USERNAME"]
 PASSWORD = os.environ["PG_PASSWORD"]
 SCHEMA   = "public"
