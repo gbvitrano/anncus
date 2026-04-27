@@ -439,9 +439,15 @@ def create_slim_parquet(parquet_path: Path) -> Path:
     schema = con.execute(
         f"DESCRIBE SELECT * FROM read_parquet('{parquet_path}')"
     ).fetchall()
-    existing = {row[0] for row in schema}
-    cols = [c for c in SLIM_COLS if c in existing]
-    missing = set(SLIM_COLS) - existing
+    # Mappa lower -> nome reale per confronto case-insensitive
+    existing_lower = {row[0].lower(): row[0] for row in schema}
+    print(f"  Colonne disponibili nel parquet: {sorted(existing_lower.values())}")
+    cols = []
+    for c in SLIM_COLS:
+        real_name = existing_lower.get(c.lower())
+        if real_name is not None:
+            cols.append(real_name)
+    missing = [c for c in SLIM_COLS if c.lower() not in existing_lower]
     if missing:
         print(f"  Warning: colonne non trovate, saltate: {missing}")
 
